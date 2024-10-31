@@ -1,0 +1,154 @@
+<!-- view_test_cases.html -->
+{% extends 'base.html' %}
+{% block title %}Test Cases for {{ feature.name }}{% endblock %}
+
+{% block head %}
+    <!-- Include SortableJS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js" integrity="sha512-ZpiRObEOSc9mV7gQ3XITzt9rjaI61lZbO1XzlzmVNtDgK1wxafQx7HZov8FzUkNdA0TTfg1twP6POYqzlTMSlw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Include jQuery (required for Bootstrap Toasts) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <!-- Include Bootstrap CSS and JS (ensure they are included in your base.html or here) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.3/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQ5APf52P1eN/6b4PF9QOsKkR9eItgOJ1EknS6rRL0Q3xg" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12E/KB5t3o1BFOp0sN5iTHC6JKJcQpeSvRO6Q7R3x0xnE5+g" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Header Section with Create Buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Left Side: Create Test Case Buttons -->
+        <div>
+            <a href="{% url 'create_test_case' feature.id %}" class="btn btn-primary mr-2">Create Test Case</a>
+            <a href="{% url 'create_test_case_qai' feature.id %}" class="btn btn-secondary">Create Test Case using QAI</a>
+        </div>
+        
+        <!-- Right Side: Optional Filter Form (Commented Out) -->
+        <!--
+        <div>
+            <form method="GET" class="form-inline">
+                <label for="status" class="mr-2">Filter by Status:</label>
+                <select name="status" id="status" class="form-control mr-2">
+                    <option value="">All</option>
+                    {% for key, value in status_choices %}
+                        <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+        </div>
+        -->
+    </div>
+    
+    <!-- Pillars Layout -->
+    <div class="row">
+        {% for key, value in status_choices %}
+            <div class="col-md-3 mb-4">
+                <h4 class="text-center">{{ value }}</h4>
+                <div class="card p-2" id="column-{{ key }}">
+                    {% for test_case in test_cases %}
+                        {% if test_case.status == key %}
+                            <div class="card mb-2 test-case-item" data-id="{{ test_case.id }}" tabindex="0" role="button" aria-grabbed="false">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ test_case.title }}</h5>
+                                    <p class="card-text">{{ test_case.description|truncatechars:100 }}</p>
+                                    <small class="text-muted">Priority: {{ test_case.priority }}</small>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Toast Notifications -->
+<!-- Toast Container -->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; min-width: 200px;">
+    <div class="toast" id="statusToast" data-delay="3000">
+        <div class="toast-header">
+            <strong class="mr-auto">Notification</strong>
+            <small class="text-muted">Just now</small>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">&times;</button>
+        </div>
+        <div class="toast-body" id="toastBody">
+            <!-- Message will be inserted here -->
+        </div>
+    </div>
+</div>
+
+<!-- AJAX Setup with CSRF Token -->
+<script>
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+</script>
+
+<!-- Drag-and-Drop Functionality -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Loop through each status pillar and make them sortable
+        {% for key, value in status_choices %}
+            var el = document.getElementById('column-{{ key }}');
+            Sortable.create(el, {
+                group: 'test_cases', // set same group to allow drag between columns
+                animation: 150,
+                onEnd: function (evt) {
+                    var testCaseId = evt.item.getAttribute('data-id');
+                    var newStatus = '{{ key }}'; // The status key of the column where the test case was dropped
+
+                    // Make AJAX call to update the status
+                    fetch("{% url 'update_test_case_status' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken,
+                        },
+                        body: JSON.stringify({
+                            'test_case_id': testCaseId,
+                            'new_status': newStatus
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Status updated successfully.');
+                            // Show success toast
+                            document.getElementById('toastBody').innerText = 'Test case status updated successfully.';
+                            $('#statusToast').toast('show');
+                        } else {
+                            // Show error toast
+                            document.getElementById('toastBody').innerText = 'Error updating status: ' + data.error;
+                            $('#statusToast').toast('show');
+                            // Optionally, move the test case back to its original column
+                            location.reload();
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        // Show error toast
+                        document.getElementById('toastBody').innerText = 'An error occurred while updating the status.';
+                        $('#statusToast').toast('show');
+                        // Optionally, move the test case back to its original column
+                        location.reload();
+                    });
+                }
+            });
+        {% endfor %}
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,119 @@
+<!-- view_test_cases.html -->
+{% extends 'base.html' %}
+{% block title %}Test Cases for {{ feature.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Header Section with Create Buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Left Side: Create Test Case Buttons -->
+        <div>
+            <a href="{% url 'create_test_case' feature.id %}" class="btn btn-primary mr-2">Create Test Case</a>
+            <a href="{% url 'create_test_case_qai' feature.id %}" class="btn btn-secondary">Create Test Case using QAI</a>
+        </div>
+    </div>
+    
+    <!-- Pillars Layout -->
+    <div class="row">
+        {% for key, value in status_choices %}
+            <div class="col-md-3 mb-4">
+                <div class="status-pillar">
+                    <div class="status-header status-{{ key|lower }}">
+                        {{ value }}
+                    </div>
+                    <div id="column-{{ key }}">
+                        {% for test_case in test_cases %}
+                            {% if test_case.status == key %}
+                                <div class="card mb-2 test-case-item" data-id="{{ test_case.id }}">
+                                    <div class="card-body d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <a href="{% url 'update_test_case' feature_id=feature.id test_case_id=test_case.id %}" class="card-title h5">{{ test_case.title }}</a>
+                                            <p class="card-text">{{ test_case.description|truncatechars:100 }}</p>
+                                            <small class="text-muted">Priority: {{ test_case.priority }}</small>
+                                        </div>
+                                        <span class="drag-handle">&#9776;</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            {% for key, value in status_choices %}
+                var el = document.getElementById('column-{{ key }}');
+                if (el) {
+                    Sortable.create(el, {
+                        group: 'test_cases',
+                        animation: 150,
+                        onEnd: function (evt) {
+                            var testCaseId = evt.item.getAttribute('data-id');
+                            var newStatus = '{{ key }}';
+
+                            // Get the new status based on the column where the item was dropped
+                            var newColumn = evt.from.id; // Get the ID of the column where the item was dropped
+                            newStatus = newColumn.replace('column-', ''); // Extract the status from the column ID
+
+                            // Get the CSRF token from the cookie
+                            var csrftoken = getCookie('csrftoken');
+
+                            fetch("{% url 'update_test_case_status' %}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': csrftoken, // Include the CSRF token here
+                                },
+                                body: JSON.stringify({
+                                    'test_case_id': testCaseId,
+                                    'new_status': newStatus
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    document.getElementById('toastBody').innerText = 'Test case status updated successfully.';
+                                    $('#statusToast').toast('show');
+                                } else {
+                                    document.getElementById('toastBody').innerText = 'Error updating status: ' + data.error;
+                                    $('#statusToast').toast('show');
+                                    location.reload();
+                                }
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                                document.getElementById('toastBody').innerText = 'An error occurred while updating the status.';
+                                $('#statusToast').toast('show');
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            {% endfor %}
+        });
+
+        // Function to get the CSRF token from the cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Check if this cookie string begins with the name we want
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+{% endblock %}

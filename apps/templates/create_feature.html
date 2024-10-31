@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Create Feature{% endblock %}
+
+{% block content %}
+<div class="container-center">
+    <div class="project-form-container">
+        <h3>Create New Feature for {{ project.name }}</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    Please correct the errors below.
+                </div>
+            {% endif %}
+            <!-- Render form fields -->
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <span class="text-danger">*</span>
+                        {% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-submit">Create Feature</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

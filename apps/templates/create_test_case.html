@@ -1,0 +1,31 @@
+<!-- create_test_case.html -->
+{% extends 'base.html' %}
+{% block title %}Create Test Case{% endblock %}
+
+{% block content %}
+<div class="container-center">
+    <div class="project-form-container">
+        <h3>Create New Test Case for {{ feature.name }}</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    Please correct the errors below.
+                </div>
+            {% endif %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-submit">Save Test Case</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

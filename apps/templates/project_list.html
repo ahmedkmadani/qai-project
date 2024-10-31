@@ -1,0 +1,29 @@
+<!-- project_list.html -->
+{% extends 'base.html' %}
+{% block title %}Your Projects{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Your Projects</h2>
+    {% if projects %}
+        <div class="row">
+            {% for project in projects %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ project.name }}</h5>
+                            <p class="card-text">{{ project.description|truncatechars:100 }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Version: {{ project.version }}</small>
+                            <a href="{% url 'project_details' project.id %}" class="btn btn-primary btn-sm float-right">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no projects. <a href="{% url 'create_project' %}">Create a new project</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}

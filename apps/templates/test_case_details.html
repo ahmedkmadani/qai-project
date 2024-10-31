@@ -1,0 +1,32 @@
+<!-- test_case_details.html -->
+{% extends 'base.html' %}
+{% block title %}Test Case Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">{{ test_case.title }}</h2>
+            <p class="card-text"><strong>Description:</strong> {{ test_case.description }}</p>
+            <p class="card-text"><strong>Steps:</strong></p>
+            <p>{{ test_case.steps|linebreaks }}</p>
+            <p class="card-text"><strong>Expected Result:</strong></p>
+            <p>{{ test_case.expected_result|linebreaks }}</p>
+            <p class="card-text"><strong>Status:</strong> 
+                {% if test_case.status == 'NEW' %}
+                    <span class="badge badge-secondary">New</span>
+                {% elif test_case.status == 'IN_PROGRESS' %}
+                    <span class="badge badge-warning">In Progress</span>
+                {% elif test_case.status == 'PASSED' %}
+                    <span class="badge badge-success">Passed</span>
+                {% elif test_case.status == 'FAILED' %}
+                    <span class="badge badge-danger">Failed</span>
+                {% endif %}
+            </p>
+            <p class="card-text"><small class="text-muted">Created at: {{ test_case.created_at }}</small></p>
+            <!-- Optional: Add a link to update the test case -->
+            <a href="{% url 'update_test_case' feature_id=test_case.feature.id test_case_id=test_case.id %}" class="btn btn-outline-primary">Update Test Case</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
