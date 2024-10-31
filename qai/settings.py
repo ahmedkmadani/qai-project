@@ -137,3 +137,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 OPENAI_API_KEY = config('OPENAI_API_KEY')  # Get OpenAI API key from environment variable
+
+# Add your domain to CSRF_TRUSTED_ORIGINS
+CSRF_TRUSTED_ORIGINS = [
+    'https://qai-project-production.up.railway.app',  # Add your production domain
+    # Add any other trusted origins here
+]
