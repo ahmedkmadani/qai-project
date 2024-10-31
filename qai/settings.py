@@ -124,6 +124,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+# Set the STATIC_ROOT for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # This is where collectstatic will collect static files
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

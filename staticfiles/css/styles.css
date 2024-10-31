@@ -1,0 +1,215 @@
+/* styles.css */
+
+/* Global Styles */
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: #f0f4f8;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Centering Container */
+.container-center {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Changed from center to flex-start */
+    padding-top: 80px; /* Added padding-top to account for the navbar */
+    min-height: 100vh;
+    box-sizing: border-box; /* Ensure padding is included in height calculation */
+}
+
+/* Form Container */
+.project-form-container {
+    padding: 30px 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Heading Styles */
+.project-form-container h3 {
+    margin-bottom: 30px;
+    color: #333333;
+    text-align: center;
+    font-weight: 700;
+}
+
+/* Form Group Styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Label Styles */
+label {
+    font-weight: 700;
+    display: inline-block; /* Changed from block to inline-block */
+    margin-bottom: 5px;
+}
+
+/* Input and Textarea Styles */
+.form-control {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    padding: 10px 12px;
+    font-size: 16px;
+}
+
+/* Input Focus Styles */
+.form-control:focus {
+    border-color: #80bdff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+/* Button Styles */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 6px;
+}
+
+/* Error Message Styles */
+.text-danger {
+    font-size: 14px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .project-form-container {
+        padding: 20px;
+    }
+}
+
+/* Navbar Styles */
+.navbar {
+    font-size: 16px;
+}
+
+.navbar-brand {
+    font-size: 24px;
+    color: #007bff !important;
+}
+
+.navbar-brand:hover {
+    color: #0056b3 !important;
+}
+
+.nav-link {
+    color: #555 !important;
+    margin-right: 15px;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #007bff !important;
+}
+
+.nav-item.active .nav-link {
+    font-weight: 700;
+    color: #007bff !important;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+}
+
+.dropdown-menu {
+    border-radius: 0;
+    border: none;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+@media (max-width: 991.98px) {
+    .navbar-nav {
+        background-color: #fff;
+        padding: 15px;
+    }
+    .nav-link {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
+.card {
+    border-radius: 10px; /* Rounded corners */
+    border: none; /* Remove default border */
+}
+
+.card .card-footer {
+    background-color: transparent;
+    border-top: none;
+}
+
+.btn-outline-primary {
+    border-radius: 20px; /* Rounded button */
+}
+
+.alert a {
+    text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+    /* Adjust card height on larger screens */
+    .card.h-100 {
+        min-height: 100%;
+    }
+}
+
+.drag-handle {
+    cursor: grab;
+}
+
+.test-case-item {
+    transition: transform 0.2s;
+}
+
+@media (max-width: 768px) {
+    .col-md-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+.status-pillar {
+    background-color: #f4f5f7;
+    border-radius: 5px;
+    padding: 10px;
+    height: 80vh;
+    overflow-y: auto;
+}
+.status-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+.status-new { background-color: #5ba4cf; }
+.status-in_progress { background-color: #f2c94c; }
+.status-passed { background-color: #27ae60; }
+.status-failed { background-color: #eb5757; }
+.card-title a {
+    color: #333;
+    text-decoration: none;
+}
+.card-title a:hover {
+    text-decoration: underline;
+}
+.drag-handle {
+    cursor: grab;
+    margin-left: 10px;
+}
