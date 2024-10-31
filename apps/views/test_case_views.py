@@ -54,7 +54,7 @@ class TestCaseCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        return reverse_lazy('feature_details', kwargs={'feature_id': self.object.feature.id})
+        return reverse_lazy('test_case_details', kwargs={'feature_id': self.object.feature.id, 'test_case_id': self.object.id})
 
 class TestCaseUpdateView(UpdateView):
     model = TestCase
