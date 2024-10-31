@@ -5,13 +5,6 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Set database environment variables
-ENV DATABASE_NAME=your_database_name
-ENV DATABASE_USER=your_database_user
-ENV DATABASE_PASSWORD=your_database_password
-ENV DATABASE_HOST=localhost
-ENV DATABASE_PORT=5432
-ENV OPENAI_API_KEY=your_openai_api_key
 
 # Set the working directory in the container
 WORKDIR /app
@@ -31,9 +24,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the entire project into the container
 COPY . /app/
-
-# Collect static files
-RUN python manage.py collectstatic --noinput
 
 # Expose the port that Gunicorn will run on
 EXPOSE 8000
