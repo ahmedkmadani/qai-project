@@ -18,7 +18,7 @@ class TestCaseSchema:
 def get_existing_test_cases(feature_id):
     return TestCase.objects.filter(feature_id=feature_id).values('title', 'description')
 
-def generate_test_case_chatgpt(feature):
+def generate_test_case_chatgpt(feature, selected_test_type):
     # Retrieve existing test cases for the feature from the database
     existing_test_cases = get_existing_test_cases(feature.id)
 
@@ -40,6 +40,8 @@ def generate_test_case_chatgpt(feature):
     Status: {feature.status}
     Start Date: {feature.start_date}
     End Date: {feature.end_date}
+    BRD (Functional Requirements): {feature.brd}  # Use the BRD as functional requirements
+    Test Type: {selected_test_type}
 
     Existing Test Cases:
     {existing_cases_summary}
@@ -48,7 +50,12 @@ def generate_test_case_chatgpt(feature):
     {{
         "title": "Test Case Title",
         "description": "Detailed description of the test case.",
-        "steps": ["Step 1", "Step 2", "Step 3"],
+        "steps": [
+            "Step 1: Describe a positive scenario.",
+            "Step 2: Describe another positive scenario.",
+            "Step 3: Describe a negative scenario.",
+            "Step 4: Describe another negative scenario."
+        ],
         "expected_result": "Expected outcome after executing the test steps."
     }}
 

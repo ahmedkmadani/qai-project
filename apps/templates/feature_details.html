@@ -19,7 +19,7 @@
         <!-- Left Side: Create Test Case Buttons -->
         <div>
             <a href="{% url 'create_test_case' feature.id %}" class="btn btn-primary mr-2">Create Test Case</a>
-            <a href="{% url 'create_test_case_qai' feature.id %}" class="btn btn-secondary">Create Test Case using QAI</a>
+            <a href="#" class="btn btn-secondary" data-toggle="modal" data-target="#testTypeModal" id="openModal">Create Test Case using QAI</a>
         </div>
         
         <!-- Right Side: Optional Filter Form (Commented Out) -->
@@ -149,6 +149,50 @@
                 }
             });
         {% endfor %}
+    });
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="testTypeModal" tabindex="-1" role="dialog" aria-labelledby="testTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testTypeModalLabel">Select Test Case Type</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="testTypeForm" method="POST" action="{% url 'create_test_case_qai' feature.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="testType">What type of test case do you want to generate?</label>
+                        <select class="form-control" id="testType" name="test_type" required>
+                            <option value="" disabled selected>Select a test type</option>
+                            <option value="FUNCTIONAL">Functional</option>
+                            <option value="NON_FUNCTIONAL">Non-Functional</option>
+                            <option value="SECURITY">Security</option>
+                            <option value="PERFORMANCE">Performance</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Test Case</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS and jQuery if not already included -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Prevent default action for the modal trigger
+    document.getElementById('openModal').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default anchor click behavior
     });
 </script>
 {% endblock %}

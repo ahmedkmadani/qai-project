@@ -12,6 +12,7 @@
             <p>{{ test_case.steps|linebreaks }}</p>
             <p class="card-text"><strong>Expected Result:</strong></p>
             <p>{{ test_case.expected_result|linebreaks }}</p>
+            <p class="card-text"><strong>Type of Test:</strong> {{ test_case.test_type }}</p>
             <p class="card-text"><strong>Status:</strong> 
                 {% if test_case.status == 'NEW' %}
                     <span class="badge badge-secondary">New</span>

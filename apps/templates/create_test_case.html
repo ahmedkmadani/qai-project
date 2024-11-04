@@ -18,7 +18,17 @@
                     <label for="{{ field.id_for_label }}">
                         {{ field.label }}{% if field.field.required %}<span class="text-danger">*</span>{% endif %}
                     </label>
-                    {{ field }}
+                    {% if field.name == 'test_type' %}
+                        <div class="d-flex flex-row">
+                            {% for radio in field %}
+                                <div class="form-check me-4" style="padding-left: 2.25rem !important">
+                                    {{ radio.tag }} {{ radio.choice_label }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
                     {% if field.errors %}
                         <div class="text-danger">{{ field.errors }}</div>
                     {% endif %}

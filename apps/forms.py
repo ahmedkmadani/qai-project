@@ -41,10 +41,32 @@ class TestCaseForm(forms.ModelForm):
             'steps': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Enter steps'}),
             'expected_result': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter expected result'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
+            'test_type': forms.RadioSelect(),
         }
-    
+
     status = forms.ChoiceField(
         choices=TestCase.STATUS_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'}),
         initial='NEW',
     )
+    test_type = forms.ChoiceField(
+        choices=TestCase.TEST_TYPE_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
+        initial='FUNCTIONAL',
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        selected_test_type = kwargs.pop('selected_test_type', None)
+        super(TestCaseForm, self).__init__(*args, **kwargs)
+
+        # Disable all radio buttons except for the selected test type
+        if selected_test_type:
+            for value, label in self.fields['test_type'].choices:
+                if value != selected_test_type:
+                    # Disable the radio button for the choice that does not match the selected test type
+                    self.fields['test_type'].widget.choices = [
+                        (value, label) if value == selected_test_type else (value, label)
+                        for value, label in self.fields['test_type'].choices
+                    ]
+                    self.fields['test_type'].widget.attrs['disabled'] = 'disabled'  # Disable the entire widget

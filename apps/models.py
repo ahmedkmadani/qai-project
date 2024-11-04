@@ -38,6 +38,13 @@ class TestCase(models.Model):
         ('FAILED', 'Failed'),
     ]
 
+    TEST_TYPE_CHOICES = [
+        ('FUNCTIONAL', 'Functional'),
+        ('NON_FUNCTIONAL', 'Non-Functional'),
+        ('SECURITY', 'Security'),
+        ('PERFORMANCE', 'Performance'),
+    ]
+
     title = models.CharField(max_length=255)
     description = models.TextField()
     steps = models.TextField()
@@ -50,6 +57,12 @@ class TestCase(models.Model):
         max_length=20,
         choices=STATUS_CHOICES,
         default='NEW',
+    )
+    
+    test_type = models.CharField(
+        max_length=20,
+        choices=TEST_TYPE_CHOICES,
+        default='FUNCTIONAL',  # Set a default value if needed
     )
 
     def __str__(self):

@@ -95,41 +95,42 @@ def update_test_case_status(request):
 def create_test_case_qai(request, feature_id):
     feature = get_object_or_404(Feature, id=feature_id)
 
+    selected_test_type = request.GET.get('selected_test_type')  # Get the selected test type
+
     if request.method == 'POST':
-        form = TestCaseForm(request.POST)
+        form = TestCaseForm(request.POST, selected_test_type=selected_test_type)
         if form.is_valid():
             test_case = form.save(commit=False)
             test_case.feature = feature
+            test_case.test_type = selected_test_type  # Set the test type
             test_case.save()
             return redirect('test_case_details', feature_id=feature.id, test_case_id=test_case.id)
 
     else:
         try:
             # Call to generate test case using ChatGPT
-            response = generate_test_case_chatgpt(feature)
+            response = generate_test_case_chatgpt(feature, selected_test_type)
 
             # Assuming response is a TestCase instance
             if isinstance(response, TestCase):
-                # If response is a TestCase instance, use its attributes directly
                 parsed_data = {
                     'title': response.title,
                     'description': response.description,
-                    'steps': "\n".join(response.steps),  # Assuming steps is a list
-                    'expected_result': response.expected_result
+                    'steps': "\n".join(response.steps),
+                    'expected_result': response.expected_result,
                 }
-
-                # Initialize form with parsed data
-                form = TestCaseForm(initial=parsed_data)
+                # Pass the selected test type as initial data
+                form = TestCaseForm(initial={**parsed_data, 'test_type': selected_test_type}, selected_test_type=selected_test_type)
             else:
-                # Handle unexpected response types
                 logger.error("Unexpected response type from generate_test_case_chatgpt.")
-                form = TestCaseForm()  # Initialize an empty form
+                form = TestCaseForm()
 
         except Exception as e:
             logger.error(f"Error generating test case: {e}")
-            form = TestCaseForm()  # Initialize an empty form
+            form = TestCaseForm(selected_test_type=selected_test_type)
 
     return render(request, 'create_test_case_qai.html', {
         'feature': feature,
         'form': form,
+        'selected_test_type': selected_test_type,  # Pass the selected test type to the template
     })

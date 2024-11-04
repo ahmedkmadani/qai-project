@@ -9,7 +9,7 @@
         <!-- Left Side: Create Test Case Buttons -->
         <div>
             <a href="{% url 'create_test_case' feature.id %}" class="btn btn-primary mr-2">Create Test Case</a>
-            <a href="{% url 'create_test_case_qai' feature.id %}" class="btn btn-secondary">Create Test Case using QAI</a>
+            <a href="#" class="btn btn-secondary" data-toggle="modal" data-target="#testTypeModal" id="openModal">Create Test Case using QAI</a>
         </div>
     </div>
     
@@ -42,6 +42,50 @@
         {% endfor %}
     </div>
 </div>
+
+<!-- Modal for Test Case Type Selection -->
+<div class="modal fade" id="testTypeModal" tabindex="-1" role="dialog" aria-labelledby="testTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testTypeModalLabel">Select Test Case Type</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="testTypeForm" method="GET" action="{% url 'create_test_case_qai' feature.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="testType">What type of test case do you want to generate?</label>
+                        <select class="form-control" id="testType" name="test_type" required>
+                            <option value="" disabled selected>Select a test type</option>
+                            <option value="FUNCTIONAL">Functional</option>
+                            <option value="NON_FUNCTIONAL">Non-Functional</option>
+                            <option value="SECURITY">Security</option>
+                            <option value="PERFORMANCE">Performance</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="selectedTestType" name="selected_test_type" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitTestType">Generate Test Case</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle the submission of the test type
+    document.getElementById('submitTestType').addEventListener('click', function() {
+        var testTypeSelect = document.getElementById('testType');
+        var selectedValue = testTypeSelect.value;
+        document.getElementById('selectedTestType').value = selectedValue; // Set the hidden input value
+        document.getElementById('testTypeForm').submit(); // Submit the form
+    });
+</script>
 {% endblock %}
 
 {% block scripts %}
