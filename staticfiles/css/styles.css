@@ -213,3 +213,21 @@ label {
     cursor: grab;
     margin-left: 10px;
 }
+
+.disabled {
+    pointer-events: none; /* Prevent interaction */
+    opacity: 0.5; /* Make it look disabled */
+}
+
+.icon-group a {
+    transition: transform 0.2s ease-in-out;
+}
+
+.icon-group a:hover {
+    transform: scale(1.1); /* Slightly enlarges the icon on hover */
+}
+
+.icon-group i {
+    color: gray; /* Sets the default color of the icons to gray */
+    font-size: 1.3em; /* Adjusts icon size for better visibility */
+}

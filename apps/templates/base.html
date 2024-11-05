@@ -31,11 +31,21 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item{% if request.path == '/' %} active{% endif %}">
-                        <a class="nav-link" href="{% url 'projects' %}">Home</a>
+                        <a class="nav-link" href="{% url 'projects' %}">Home </a>
                     </li>
                     <li class="nav-item{% if request.path == '/create-project/' %} active{% endif %}">
                         <a class="nav-link" href="{% url 'create_project' %}">Create Project</a>
                     </li>
+                    {% if project_id %}
+<li class="nav-item{% if '/projects/' in request.path %} active{% endif %}">
+                        <a class="nav-link" href="{% url 'project_details' project_id=project_id %}">Features</a>
+                    </li>
+                    {% if feature_id %}
+                    <li class="nav-item{% if  '/test-cases/' in request.path  %} active{% endif %}">
+                        <a class="nav-link" href="{% url 'view_test_cases' feature_id=feature_id %}">Test Cases</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
                 </ul>
             </div>
         </div>

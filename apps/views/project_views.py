@@ -11,7 +11,7 @@ def project_list(request):
 def project_details(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     features = project.features.all()
-    return render(request, 'project_details.html', {'project': project, 'features': features})
+    return render(request, 'project_details.html', {'project': project, 'features': features, 'project_id': project_id})
 
 class ProjectCreateView(CreateView):
     model = Project

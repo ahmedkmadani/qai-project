@@ -28,12 +28,17 @@ def view_test_cases(request, feature_id):
         'feature': feature,
         'test_cases': test_cases,
         'status_choices': status_choices,
+        "project_id": feature.project.id,
+        'feature_id': feature.id
     })
 
 def test_case_details(request,feature_id,test_case_id):
     test_case = get_object_or_404(TestCase, id=test_case_id)
     return render(request, 'test_case_details.html', {
         'test_case': test_case,
+        'feature_id': test_case.feature.id,
+        "project_id": test_case.feature.project.id,
+
     })
 
 class TestCaseCreateView(CreateView):
