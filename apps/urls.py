@@ -1,4 +1,5 @@
 from django.urls import path
+from apps.views.generate_code_views import execute_code, generate_code_view
 from apps.views.project_views import project_list, project_details, ProjectCreateView
 from apps.views.feature_views import FeatureCreateView
 from apps.views.test_case_views import (
@@ -21,4 +22,6 @@ urlpatterns = [
     path('features/<int:feature_id>/test-cases/<int:test_case_id>/update/',TestCaseUpdateView.as_view(),name='update_test_case'),
     path('ajax/update-test-case-status/', update_test_case_status, name='update_test_case_status'),
     path('features/<int:feature_id>/test-cases/qai/', create_test_case_qai, name='create_test_case_qai'),
+    path('features/<int:feature_id>/test-cases/<int:test_case_id>/generate-code/', generate_code_view, name='generate_code_view'),
+    path('execute_code/', execute_code, name='execute_code'),
 ]

@@ -1,0 +1,137 @@
+<!-- apps/templates/generated_code_view.html -->
+{% extends 'base.html' %}
+{% block title %}Generated Selenium Code{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5">
+    <div class="vscode-container">
+        <!-- VSCode-style header -->
+        <div class="vscode-header d-flex align-items-center justify-content-between px-3">
+            <span class="text-light">Generated Code - {{ test_case.title }}</span>
+            <div class="vscode-icons">
+                <span class="text-light">● ● ●</span>
+            </div>
+        </div>
+
+        <!-- Code and Output Sections -->
+        <div class="row no-gutters">
+            <div class="col-lg-6">
+                <h4 class="section-title">Code Section</h4>
+                <div class="code-editor">
+                    <textarea id="generated-code" class="code-textarea">{{ generated_code }}</textarea>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h4 class="section-title">Execution Output</h4>
+                <div id="execution-output" class="execution-output">
+                    <p>Execution results will be displayed here.</p>
+                </div>
+                <button id="run-code" class="btn btn-primary mt-2">Run Code</button>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <a href="{% url 'test_case_details' feature_id=test_case.feature.id test_case_id=test_case.id %}" class="btn btn-secondary mt-3">Back to Test Cases</a>
+    </div>
+</div>
+
+<!-- Include Prism.js for syntax highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+
+<script>
+    document.getElementById('run-code').addEventListener('click', function() {
+        const code = document.getElementById('generated-code').value;
+        const outputDiv = document.getElementById('execution-output');
+        outputDiv.innerHTML = '<p>Running the code...</p>';
+        
+        // Send the code to the backend for execution
+        fetch("{% url 'execute_code' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+            },
+            body: new URLSearchParams({
+                'code': code
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.output) {
+                outputDiv.innerHTML = '<pre>' + data.output + '</pre>'; // Display the output
+            } else {
+                outputDiv.innerHTML = '<p>Error: ' + data.error + '</p>';
+            }
+        })
+        .catch(error => {
+            outputDiv.innerHTML = '<p>Error executing code: ' + error.message + '</p>';
+        });
+    });
+</script>
+
+<style>
+    /* VSCode Container Styles */
+    .vscode-container {
+        background-color: #1e1e1e;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        max-width: 95%; /* Increase width to occupy more horizontal space */
+        margin: 0 auto;
+    }
+    .vscode-header {
+        background-color: #2d2d2d;
+        height: 30px;
+        color: #ffffff;
+        font-size: 0.9em;
+    }
+    .vscode-icons {
+        color: #999;
+    }
+
+    /* Code Editor Styles */
+    .code-editor {
+        background-color: #1e1e1e;
+        color: #dcdcdc;
+        padding: 0;
+        height: 500px; /* Fixed height for the code editor */
+        overflow-y: auto;
+    }
+    .code-textarea {
+        width: 100%;
+        height: 100%;
+        background-color: #1e1e1e;
+        color: #dcdcdc;
+        padding: 15px;
+        border: none;
+        resize: none;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1em;
+        line-height: 1.5;
+    }
+    .code-textarea:focus {
+        outline: none;
+    }
+
+    /* Section Title */
+    .section-title {
+        color: #dcdcdc;
+        margin-top: 15px;
+    }
+
+    /* Execution Output Styles */
+    .execution-output {
+        background-color: #1e1e1e;
+        color: #ffffff;
+        padding: 15px;
+        height: 500px; /* Increased height for output */
+        overflow-y: auto;
+        font-family: 'Courier New', Courier, monospace;
+        border-left: 1px solid #2d2d2d;
+    }
+    .execution-output pre {
+        color: #ffffff;
+    }
+</style>
+{% endblock %}

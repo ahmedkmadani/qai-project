@@ -30,7 +30,7 @@ def view_test_cases(request, feature_id):
         'status_choices': status_choices,
     })
 
-def test_case_details(request, feature_id, test_case_id):
+def test_case_details(request,feature_id,test_case_id):
     test_case = get_object_or_404(TestCase, id=test_case_id)
     return render(request, 'test_case_details.html', {
         'test_case': test_case,

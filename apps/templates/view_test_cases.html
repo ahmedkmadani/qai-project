@@ -26,12 +26,28 @@
                             {% if test_case.status == key %}
                                 <div class="card mb-2 test-case-item" data-id="{{ test_case.id }}">
                                     <div class="card-body d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <a href="{% url 'update_test_case' feature_id=feature.id test_case_id=test_case.id %}" class="card-title h5">{{ test_case.title }}</a>
+                                        <div class="flex-grow-1">
+                                            <h5 class="card-title">
+                                                <a href="{% url 'test_case_details' feature_id=feature.id test_case_id=test_case.id %}" class="text-decoration-none">{{ test_case.title }}</a>
+                                            </h5>
                                             <p class="card-text">{{ test_case.description|truncatechars:100 }}</p>
                                             <small class="text-muted">Priority: {{ test_case.priority }}</small>
                                         </div>
-                                        <span class="drag-handle">&#9776;</span>
+                                        <span class="drag-handle" title="Drag to reorder">&#9776;</span> <!-- Drag handle icon -->
+                                    </div>
+                                    <hr class="my-2"> <!-- Horizontal line above the footer -->
+                                    <div class="card-footer text-center">
+                                        <div class="icon-group d-flex justify-content-center">
+                                            <a href="{% url 'update_test_case' feature_id=feature.id test_case_id=test_case.id %}" class="mx-3" title="Edit Test Case">
+                                                <i class="fas fa-edit fa-md text-secondary"></i> <!-- Gray icon color, slightly larger -->
+                                            </a>
+                                            <a href="{% url 'test_case_details' feature_id=feature.id test_case_id=test_case.id %}" class="mx-3" title="View Test Case">
+                                                <i class="fas fa-eye fa-md text-secondary"></i> <!-- Gray icon color, slightly larger -->
+                                            </a>
+                                            <a href="{% url 'generate_code_view' feature_id=feature.id test_case_id=test_case.id %}" class="mx-3" title="View Code">
+                                                <i class="fas fa-code fa-md text-secondary"></i> <!-- Gray icon color, slightly larger -->
+                                            </a>
+                                        </div>                                        
                                     </div>
                                 </div>
                             {% endif %}
@@ -60,10 +76,10 @@
                         <label for="testType">What type of test case do you want to generate?</label>
                         <select class="form-control" id="testType" name="test_type" required>
                             <option value="" disabled selected>Select a test type</option>
-                            <option value="FUNCTIONAL">Functional</option>
-                            <option value="NON_FUNCTIONAL">Non-Functional</option>
-                            <option value="SECURITY">Security</option>
-                            <option value="PERFORMANCE">Performance</option>
+                            <option value="Functional">Functional</option>
+                            <option value="Non-Functional">Non-Functional</option>
+                            <option value="Security">Security</option>
+                            <option value="Performance">Performance</option>
                         </select>
                     </div>
                     <input type="hidden" id="selectedTestType" name="selected_test_type" value="">
